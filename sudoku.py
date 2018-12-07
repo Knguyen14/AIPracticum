@@ -1,52 +1,84 @@
 import random
-#initialize board 
+
+"""Gets a tuple of reference objects that are useful for describing the Sudoku grid."""
+def cross(str_a, str_b):
+    """Cross product (concatenation) of two strings A and B."""
+    return [a + b for a in str_a for b in str_b]
+
+all_rows = 'ABCDEFGHI'
+all_cols = '123456789'
+
+# Build up list of all cell positions on the grid
+cells = cross(all_rows, all_cols)
+values = {}
+for cell in cells:
+    values[cell] = 0
+    
+for cell in cells:
+    row = cell[0]
+    column = cell[1]
+    
+    #print(row, column)
+    values[cell] = str(random.randint(1,9))
+    
 
 
-board = [[i for i in range(9)] for j in range(9)]
+def display_grid(grid, coords=False):
+	"""
+	Displays a 9x9 soduku grid in a nicely formatted way.
+	Args:
+		grid (str|dict|list): A string representing a Sudoku grid. Valid characters are digits from 1-9 and empty squares are
+			specified by 0 or . only. Any other characters are ignored. A `ValueError` will be raised if the input does
+			not specify exactly 81 valid grid positions.
+			Can accept a dictionary where each key is the position on the board from A1 to I9.
+			Can accept a list of strings or integers with empty squares represented by 0.
+		coords (bool): Optionally prints the coordinate labels.
+	Returns:
+		str: Formatted depiction of a 9x9 soduku grid.
+	"""
+	if grid is None or grid is False:
+		return None
 
-#prints board in grid form
-# for x in board:
-#     print(*x, sep=" ")
+	all_rows = 'ABCDEFGHI'
+	all_cols = '123456789'
+	null_chars = '0.'
 
-def getBlocks(board):
-    answer = []
-    for r in range(3):
-        for c in range(3):
-            block = []
-            for i in range(3):
-                for j in range(3):
-                    block.append(board[3*r + i][3*c + j])
-            answer.append(block)
-    return answer
+	if type(grid) == str:
+		grid = parse_puzzle(grid)
+	elif type(grid) == list:
+		grid = parse_puzzle(''.join([str(el) for el in grid]))
 
+	width = max([3, max([len(grid[pos]) for pos in grid]) + 1])
+	display = ''
 
-#print(getBlocks(board))
+	if coords:
+		display += '   ' + ''.join([all_cols[i].center(width) for i in range(3)]) + '|'
+		display += ''.join([all_cols[i].center(width) for i in range(3, 6)]) + '|'
+		display += ''.join([all_cols[i].center(width) for i in range(6, 9)]) + '\n   '
+		display += '--' + ''.join(['-' for x in range(width * 9)]) + '\n'
 
-def assign_val(val, x, y,column):
-    #print(val, board[x][:], column)
-    if val not in board[x][:] and val not in column:
-        board[x][y] = num
-        return True
-    else:
-        return False
+	row_counter = 0
+	col_counter = 0
+	for row in all_rows:
+		if coords:
+			display += all_rows[row_counter] + ' |'
+		row_counter += 1
+		for col in all_cols:
+			col_counter += 1
+			if grid[row + col] in null_chars:
+				grid[row + col] = '.'
 
-for ii in range(0,9):
-    for jj in range(0,9):
-        column = []
-        for row in board:
-            column.append(row[jj])
+			display += ('%s' % grid[row + col]).center(width)
+			if col_counter % 3 == 0 and col_counter % 9 != 0:
+				display += '|'
+			if col_counter % 9 == 0:
+				display += '\n'
+		if row_counter % 3 == 0 and row_counter != 9:
+			if coords:
+				display += '  |'
+			display += '+'.join([''.join(['-' for x in range(width * 3)]) for y in range(3)]) + '\n'
 
-        board[ii][jj] = random.randint(0,9)
-        #print(row[jj], column)
-        #print(board[ii][:])
-        # okay = False
-        # while not okay:
-        #     num = random.randint(1, 10)
-        #     if assign_val(num, ii, jj, column) == True:
-        #         okay = True
-
-
-        #if num not in
-#prints board in grid form
-for x in board:
-    print(*x, sep=" ")
+	print(display)
+	return display
+    
+display_grid(values)
