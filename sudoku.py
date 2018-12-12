@@ -48,7 +48,10 @@ for line in file:
     #boards.append(line)
     line = str(line)
     line = line.strip()
+    if len(line) != 81:
+        continue
     boards.append(line)
+
 
 num_boards = len(boards)
 
@@ -59,11 +62,11 @@ game_board = boards[ind]
 
 #init board with given values
 for i in range(81):
-    if game_board[i] != '.':
+    if game_board[i] != '.' and game_board[i] != 0:
         grid_vals[cells[i]] = game_board[i]
 
 
-def display_grid(grid, coords=False):
+def display_grid(grid):
     """
     Displays a 9x9 soduku grid in a nicely formatted way.
     Args:
@@ -80,23 +83,12 @@ def display_grid(grid, coords=False):
         return None
     all_rows = 'ABCDEFGHI'
     all_cols = '123456789'
-    null_chars = '0.'
-    if type(grid) == str:
-        grid = parse_puzzle(grid)
-    elif type(grid) == list:
-        grid = parse_puzzle(''.join([str(el) for el in grid]))
-    width = max([3, max([len(grid[pos]) for pos in grid]) + 1])
+    #width = max([3, max([len(grid[pos]) for pos in grid]) + 1])
+    width = 3
     display = ''
-    if coords:
-        display += '   ' + ''.join([all_cols[i].center(width) for i in range(3)]) + '|'
-        display += ''.join([all_cols[i].center(width) for i in range(3, 6)]) + '|'
-        display += ''.join([all_cols[i].center(width) for i in range(6, 9)]) + '\n   '
-        display += '--' + ''.join(['-' for x in range(width * 9)]) + '\n'
     row_counter = 0
     col_counter = 0
     for row in all_rows:
-        if coords:
-            display += all_rows[row_counter] + ' |'
         row_counter += 1
         for col in all_cols:
             col_counter += 1
@@ -109,8 +101,6 @@ def display_grid(grid, coords=False):
             if col_counter % 9 == 0:
                 display += '\n'
         if row_counter % 3 == 0 and row_counter != 9:
-            if coords:
-                display += '  |'
             display += '+'.join([''.join(['-' for x in range(width * 3)]) for y in range(3)]) + '\n'
     print(display)
     return display
@@ -134,33 +124,40 @@ for cell in cells:
         if len(grid_vals[ind]) == 1 and grid_vals[ind] != '.':
             assigned_val = int(grid_vals[ind][0])
             taken.append(assigned_val)
-            #print(assigned_val)
-            #print(int(grid_vals[ind][0]))
-            #print("AHHHH")
-            #print(grid_vals[ind][0])
-            #print(possible_vals)
-            #possible_vals.remove(int(grid_vals[ind][0]))
-            #pass
-    #print(sorted(taken))
     if grid_vals[cell] == '.' :
         possible_vals = sorted(list(set(possible_vals) - set(taken)))
-        grid_vals[cell] = possible_vals
-#display_grid(grid_vals)
-    #print(possible_vals)
+        #possibility that there is only one value possible for the cell, if so, go ahead and assign it now
+        if len(possible_vals) > 1:
+            grid_vals[cell] = possible_vals
+        else:
+            grid_vals[cell] = str(possible_vals)
+
 
 
 
 
 #getting most constrained variables -> choose a random one from here to solve
 min_len = float('inf')
-most_constrainted = {}
+most_constrained = []
 for key, val in grid_vals.items():
     if len(val) < min_len and len(val) != 1:
-        most_constrainted = {}
+        most_constrained = []
         min_len = len(val)
-        most_constrainted[key] = val
+        most_constrained.append(key)
     elif len(val) == min_len:
-        most_constrainted[key] = val
+        most_constrained.append(key)
 
-#print(most_constrainted)
-print(grid_vals)
+print(most_constrained)
+print(len(most_constrained))
+
+val_ind = random.randint(0,len(most_constrained)-1)
+print(most_constrained[val_ind])
+possible = grid_vals[most_constrained[val_ind]]
+choice_ind = random.randint(0,len(possible)-1)
+assignment = grid_vals[most_constrained[val_ind]][choice_ind]
+print(assignment)
+#display_grid(grid_vals)
+grid_vals[most_constrained[val_ind]] = str(assignment)
+#grid_vals[most_constrained[val_ind]].append(str(assignment))
+display_grid(grid_vals)
+#print(grid_vals)
