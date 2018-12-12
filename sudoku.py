@@ -134,8 +134,6 @@ for cell in cells:
 
 
 
-
-
 #getting most constrained variables -> choose a random one from here to solve
 min_len = float('inf')
 most_constrained = []
@@ -148,16 +146,42 @@ for key, val in grid_vals.items():
         most_constrained.append(key)
 
 print(most_constrained)
-print(len(most_constrained))
-
-val_ind = random.randint(0,len(most_constrained)-1)
-print(most_constrained[val_ind])
-possible = grid_vals[most_constrained[val_ind]]
-choice_ind = random.randint(0,len(possible)-1)
-assignment = grid_vals[most_constrained[val_ind]][choice_ind]
-print(assignment)
+i = random.randint(0,len(most_constrained)-1)
+print(most_constrained[i])
+print(grid_vals[most_constrained[i]])
 #display_grid(grid_vals)
-grid_vals[most_constrained[val_ind]] = str(assignment)
-#grid_vals[most_constrained[val_ind]].append(str(assignment))
-display_grid(grid_vals)
-#print(grid_vals)
+possible = grid_vals[most_constrained[i]]
+choice_ind = random.randint(0,len(possible)-1)
+assignment = grid_vals[most_constrained[i]][choice_ind]
+print(assignment)
+
+
+
+def assign_val(value, cell, grid_vals, related_cells):
+    grid_vals[cell] = str(value)
+    neighbors = []
+    for n in related_cells[cell]:
+        for i in range(0,9):
+            neighbors.append(n[i])
+
+    neighbors = sorted(set(neighbors))
+    for n in neighbors:
+        #print(n, grid_vals[n], str(value))
+        if len(grid_vals[n]) > 1 and value in grid_vals[n] :
+            grid_vals[n].remove(value)
+
+
+assign_val(assignment, most_constrained[i], grid_vals, related_cells)
+display_grid(grid_vals.copy())
+print(grid_vals)
+
+# val_ind = random.randint(0,len(most_constrained)-1)
+# print(most_constrained[val_ind])
+# possible = grid_vals[most_constrained[val_ind]]
+# choice_ind = random.randint(0,len(possible)-1)
+# assignment = grid_vals[most_constrained[val_ind]][choice_ind]
+# print(assignment)
+# #display_grid(grid_vals)
+# grid_vals[most_constrained[val_ind]] = str(assignment)
+# #grid_vals[most_constrained[val_ind]].append(str(assignment))
+# display_grid(grid_vals)
