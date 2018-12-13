@@ -16,7 +16,69 @@ def update(grid_vals):
             if(len(grid_vals[cell]) == 1) and grid_vals[cell] in grid_vals[n] and len(grid_vals[n]) != 1:
                 grid_vals[n] = grid_vals[n].replace(grid_vals[cell],'')
 
+def get_poss_vals():
+    for cell in cells:
+        possible_vals = ['1','2','3','4','5','6','7','8','9']
+        connected_cells = []
+        neighbors = related_cells[cell]
+        #narrow dor each cellwn what cells we are dealing with here (removing repeats)
+        for n in neighbors:
+            for i in range(0,9):
+                connected_cells.append(n[i])
+        connected_cells = sorted(set(connected_cells))
+        taken = []
+        #print(connected_cells)
+        for ind in connected_cells:
+            #print(type(grid_vals[ind]))
+            #if length is 1, this means that value has been assigned already
+            if len(grid_vals[ind]) == 1 and grid_vals[ind] != '.':
+                assigned_val = str(grid_vals[ind][0])
+                taken.append(assigned_val)
+        if grid_vals[cell] == '.' or grid_vals[cell] == [] :
+            possible_vals = sorted(list(set(possible_vals) - set(taken)))
+            #possibility that there is only one value possible for the cell, if so, go ahead and assign it now
+            if len(possible_vals) != 0:
+                st = ''
+                for i in possible_vals:
+                    st += i
+                grid_vals[cell] = st
 
+
+
+def solver():
+    for cell, poss_vals in grid_vals.items():
+        if len(poss_vals) == 1:
+            assign_val(poss_vals[0], cell)
+
+    for cell in cells:
+        seen = {}
+        for units in related_cells[cell]:
+            for k in units:
+                if len(grid_vals[k]) > 1:
+                    for val in grid_vals[k]:
+                        if val not in seen:
+                            seen[val] = [1, k]
+                        else:
+                            seen[val][0] = seen[val][0] + 1
+                            seen[val].append(k)
+        for key, val in seen.items():
+            if val[0] == 1:
+                assign_val(key, val[1])
+
+    def is_complete(grid_vals):
+        for cell in cells:
+            if len(grid_vals[cell]) > 1:
+                return False
+        return True
+
+    counter = 0
+    game = is_complete(grid_vals)
+    while game == False:
+        update(grid_vals)
+        counter += 1
+        if counter > 19:
+            break
+        game = is_complete(grid_vals)
 
 col_labels = '123456789'
 row_labels = 'ABCDEFGHI'
@@ -141,72 +203,11 @@ def display_grid(grid):
 
 
 
+
+
 display_grid(grid_vals)
 
-### getting all possible values for
-for cell in cells:
-    possible_vals = ['1','2','3','4','5','6','7','8','9']
-    connected_cells = []
-    neighbors = related_cells[cell]
-    #narrow dor each cellwn what cells we are dealing with here (removing repeats)
-    for n in neighbors:
-        for i in range(0,9):
-            connected_cells.append(n[i])
-    connected_cells = sorted(set(connected_cells))
-    taken = []
-    #print(connected_cells)
-    for ind in connected_cells:
-        #print(type(grid_vals[ind]))
-        #if length is 1, this means that value has been assigned already
-        if len(grid_vals[ind]) == 1 and grid_vals[ind] != '.':
-            assigned_val = str(grid_vals[ind][0])
-            taken.append(assigned_val)
-    if grid_vals[cell] == '.' or grid_vals[cell] == [] :
-        possible_vals = sorted(list(set(possible_vals) - set(taken)))
-        #possibility that there is only one value possible for the cell, if so, go ahead and assign it now
-        if len(possible_vals) != 0:
-            st = ''
-            for i in possible_vals:
-                st += i
-            grid_vals[cell] = st
-
-
-
-for cell, poss_vals in grid_vals.items():
-    if len(poss_vals) == 1:
-        assign_val(poss_vals[0], cell)
-
-for cell in cells:
-    seen = {}
-    for units in related_cells[cell]:
-        for k in units:
-            if len(grid_vals[k]) > 1:
-                for val in grid_vals[k]:
-                    if val not in seen:
-                        seen[val] = [1, k]
-                    else:
-                        seen[val][0] = seen[val][0] + 1
-                        seen[val].append(k)
-    for key, val in seen.items():
-        if val[0] == 1:
-            assign_val(key, val[1])
-
-def is_complete(grid_vals):
-    for cell in cells:
-        if len(grid_vals[cell]) > 1:
-            return False
-    return True
-
-counter = 0
-game = is_complete(grid_vals)
-while game == False:
-    update(grid_vals)
-    counter += 1
-    if counter > 19:
-        break
-    game = is_complete(grid_vals)
-
-
-
+get_poss_vals()
+solver()
 
 display_grid(grid_vals)
