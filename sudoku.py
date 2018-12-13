@@ -9,13 +9,12 @@ def cross(A,B):
 def assign_val(value, cell):
     grid_vals[cell] = value
     update(grid_vals)
-    
+
 def update(grid_vals):
     for cell in cells:
         for n in peers[cell]:
             if(len(grid_vals[cell]) == 1) and grid_vals[cell] in grid_vals[n] and len(grid_vals[n]) != 1:
                 grid_vals[n] = grid_vals[n].replace(grid_vals[cell],'')
-
 
 
 
@@ -88,9 +87,7 @@ num_boards = len(boards)
 
 ind = random.randint(1, num_boards-1)
 print(ind)
-game_board = boards[26] 
-#game_board = '2...8.3...6..7..84.3.5..2.9...1.54.8.........4.27.6...3.1..7.4.72..4..6...4.1...3'
-#game_board = '.4.....5...19436....9...3..6...5...21.3...5.68...2...7..5...2....24367...3.....4.'
+game_board = boards[ind] 
 
 #init board with given values
 for i in range(81):
@@ -120,7 +117,7 @@ def display_grid(grid):
         return None
     all_rows = 'ABCDEFGHI'
     all_cols = '123456789'
-    #width = max([3, max([len(grid[pos]) for pos in grid]) + 1])
+    width = max([3, max([len(grid[pos]) for pos in grid]) + 1])
     width = 3
     display = ''
     row_counter = 0
@@ -179,48 +176,6 @@ for cell, poss_vals in grid_vals.items():
     if len(poss_vals) == 1:
         assign_val(poss_vals[0], cell)
 
-# for row in rows:
-#     seen = {}
-#     for r in row:
-#         if len(grid_vals[r]) > 1:
-#             for val in grid_vals[r]:
-#                 if val not in seen:
-#                     seen[val] = [1, r]
-#                 else:
-#                     seen[val][0] = seen[val][0] + 1
-#                     seen[val].append(r)
-#     for key, val1 in seen.items():
-#         if val1[0] == 1:
-#             assign_val(key, val1[1])
-
-# for col in cols:
-#     seen = {}
-#     for c in col:
-#         if len(grid_vals[c]) > 1:
-#             for val in grid_vals[c]:
-#                 if val not in seen:
-#                     seen[val] = [1, c]
-#                 else:
-#                     seen[val][0] = seen[val][0] + 1
-#                     seen[val].append(c)
-#     for key, val in seen.items():
-#         if val[0] == 1:
-#             assign_val(key, val[1])
-
-# for quad in quads:
-#     seen = {}
-#     for q in quads:
-#         if len(grid_vals[c]) > 1:
-#             for val in grid_vals[q]:
-#                 if val not in seen:
-#                     seen[val] = [1, q]
-#                 else:
-#                     seen[val][0] = seen[val][0] + 1
-#                     seen[val].append(q)
-#     for key, val in seen.items():
-#         if val[0] == 1:
-#             assign_val(key, val[1])
-
 for cell in cells:
     seen = {}
     for units in related_cells[cell]:
@@ -242,12 +197,16 @@ def is_complete(grid_vals):
             return False
     return True
 
-game = is_complete(grid_vals)
 counter = 0
+game = is_complete(grid_vals)
 while game == False:
     update(grid_vals)
-    game = is_complete(grid_vals)
     counter += 1
     if counter > 19:
-        display_grid(grid_vals)
+        break
+    game = is_complete(grid_vals)
+
+
+
+
 display_grid(grid_vals)
