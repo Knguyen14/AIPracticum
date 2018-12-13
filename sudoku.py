@@ -8,17 +8,15 @@ def cross(A,B):
 
 def assign_val(value, cell):
     grid_vals[cell] = value
-    neighbors = []
-    for n in related_cells[cell]:
-        for i in range(0,9):
-            neighbors.append(n[i])
     update(grid_vals)
-
+    
 def update(grid_vals):
     for cell in cells:
         for n in peers[cell]:
-            if(len(grid_vals[cell]) == 1) and grid_vals[cell] in grid_vals[n]:
+            if(len(grid_vals[cell]) == 1) and grid_vals[cell] in grid_vals[n] and len(grid_vals[n]) != 1:
                 grid_vals[n] = grid_vals[n].replace(grid_vals[cell],'')
+
+
 
 
 col_labels = '123456789'
@@ -84,12 +82,12 @@ for line in file:
     if len(line) == 81:
         boards.append(line)
 
-print(len(boards))
+#print(len(boards))
 num_boards = len(boards)
 # print(num_boards)
 
 ind = random.randint(1, num_boards-1)
-# print(ind)
+print(ind)
 game_board = boards[ind] 
 #game_board = '2...8.3...6..7..84.3.5..2.9...1.54.8.........4.27.6...3.1..7.4.72..4..6...4.1...3'
 #game_board = '.4.....5...19436....9...3..6...5...21.3...5.68...2...7..5...2....24367...3.....4.'
@@ -173,45 +171,55 @@ for cell in cells:
             st = ''
             for i in possible_vals:
                 st += i
-
             grid_vals[cell] = st
+
 
 
 for cell, poss_vals in grid_vals.items():
     if len(poss_vals) == 1:
         assign_val(poss_vals[0], cell)
-        update(grid_vals)
 
-for row in rows:
-    seen = {}
-    for r in row:
-        if len(grid_vals[r]) > 1:
-            for val in grid_vals[r]:
-                if val not in seen:
-                    seen[val] = [1, r]
-                else:
-                    seen[val][0] = seen[val][0] + 1
-                    seen[val].append(r)
-    for key, val1 in seen.items():
-        if val1[0] == 1:
-            assign_val(key, val1[1])
-            update(grid_vals)
+# for row in rows:
+#     seen = {}
+#     for r in row:
+#         if len(grid_vals[r]) > 1:
+#             for val in grid_vals[r]:
+#                 if val not in seen:
+#                     seen[val] = [1, r]
+#                 else:
+#                     seen[val][0] = seen[val][0] + 1
+#                     seen[val].append(r)
+#     for key, val1 in seen.items():
+#         if val1[0] == 1:
+#             assign_val(key, val1[1])
 
-for col in cols:
-    seen = {}
-    for c in col:
-        if len(grid_vals[c]) > 1:
-            for val in grid_vals[c]:
-                if val not in seen:
-                    seen[val] = [1, c]
-                else:
-                    seen[val][0] = seen[val][0] + 1
-                    seen[val].append(c)
-    for key, val in seen.items():
-        if val[0] == 1:
-            assign_val(key, val[1])
-            update(grid_vals)
+# for col in cols:
+#     seen = {}
+#     for c in col:
+#         if len(grid_vals[c]) > 1:
+#             for val in grid_vals[c]:
+#                 if val not in seen:
+#                     seen[val] = [1, c]
+#                 else:
+#                     seen[val][0] = seen[val][0] + 1
+#                     seen[val].append(c)
+#     for key, val in seen.items():
+#         if val[0] == 1:
+#             assign_val(key, val[1])
 
+# for quad in quads:
+#     seen = {}
+#     for q in quads:
+#         if len(grid_vals[c]) > 1:
+#             for val in grid_vals[q]:
+#                 if val not in seen:
+#                     seen[val] = [1, q]
+#                 else:
+#                     seen[val][0] = seen[val][0] + 1
+#                     seen[val].append(q)
+#     for key, val in seen.items():
+#         if val[0] == 1:
+#             assign_val(key, val[1])
 
 for cell in cells:
     seen = {}
@@ -227,6 +235,6 @@ for cell in cells:
     for key, val in seen.items():
         if val[0] == 1:
             assign_val(key, val[1])
-            update(grid_vals)
+
 
 display_grid(grid_vals)
