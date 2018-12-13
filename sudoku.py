@@ -88,7 +88,7 @@ num_boards = len(boards)
 
 ind = random.randint(1, num_boards-1)
 print(ind)
-game_board = boards[31] 
+game_board = boards[26] 
 #game_board = '2...8.3...6..7..84.3.5..2.9...1.54.8.........4.27.6...3.1..7.4.72..4..6...4.1...3'
 #game_board = '.4.....5...19436....9...3..6...5...21.3...5.68...2...7..5...2....24367...3.....4.'
 
@@ -235,6 +235,19 @@ for cell in cells:
     for key, val in seen.items():
         if val[0] == 1:
             assign_val(key, val[1])
-update(grid_vals)
 
+def is_complete(grid_vals):
+    for cell in cells:
+        if len(grid_vals[cell]) > 1:
+            return False
+    return True
+
+game = is_complete(grid_vals)
+counter = 0
+while game == False:
+    update(grid_vals)
+    game = is_complete(grid_vals)
+    counter += 1
+    if counter > 19:
+        display_grid(grid_vals)
 display_grid(grid_vals)
