@@ -12,68 +12,20 @@ def assign_val(value, cell):
     for n in related_cells[cell]:
         for i in range(0,9):
             neighbors.append(n[i])
+    update(grid_vals)
 
-    neighbors = sorted(set(neighbors))
-    #print(cell,neighbors)
-    for n in neighbors:
-        #print(n, grid_vals[n], str(value))
-        if len(grid_vals[n]) > 1 and value in grid_vals[n] :
-            # print(n)
-            # print(grid_vals['C5'])
-            # print(len(grid_vals[n]))
-            print("neighbor",n)
-            print("GRID VALS",grid_vals[n])
-            #print("VALUE", value)
-            grid_vals[n] = grid_vals[n].replace(value,'')
-            print("after",grid_vals[n])
+def update(grid_vals):
+    for cell in cells:
+        for n in peers[cell]:
+            if(len(grid_vals[cell]) == 1) and grid_vals[cell] in grid_vals[n]:
+                grid_vals[n] = grid_vals[n].replace(grid_vals[cell],'')
 
-        # if n != cell and len(grid_vals[n] == 1 and grid_vals[n][0] == value):
-        #     return False
-
-
-# def assign_val(grid_vals, cell, value):
-#     print(value)
-#     other_vals = grid_vals[cell].remove(value)
-#     if all(eliminate(grid_vals, cell, val_2) for val_2 in other_vals):
-#         return grid_vals
-#     else:
-#         return False
-#
-#
-# def eliminate(grid_vals, cell, val):
-#     if val not in grid_vals[cell]:
-#         return grid_vals
-#     grid_vals[cell] - grid_vals[cell].remove(val)
-#
-#     if len(grid_vals[cell]) == 0:
-#         return False
-#
-#     elif len(grid_vals[cell]) == 1:
-#         val2 = grid_vals[cell]
-#         if not all(eliminate(grid_vals, cell2, val2) for cell2 in neighbors[cell]):
-#             return False
-#
-#
-#     ######
-#     for r in related_cells[cell]:
-#         cell_location = [cell for cell in r if val in grid_vals[cell]]
-#         if len(cell_location) == 0:
-#             return False
-#         elif len(cell_location) == 1:
-#             if not assign_val(grid_vals, cell_location[0], val):
-#                 return False
-#     return grid_vals
-#
 
 col_labels = '123456789'
 row_labels = 'ABCDEFGHI'
 
 cells = cross(row_labels,col_labels)
 
-# unitlist = ([cross(row_labels, c) for c in col_labels] +
-#             [cross(r, col_labels) for r in row_labels] +
-#             [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')])
-            
             
 cols = [cross(row_labels, c) for c in col_labels]
 rows = [cross(row, col_labels) for row in row_labels]
@@ -95,7 +47,8 @@ for cell in cells:
         if cell in quads[i]:
             related_cells[cell].append(quads[i])
 
-neighbors = {}
+
+peers = {}
 
 for cell in cells:
     to_add = []
@@ -107,7 +60,9 @@ for cell in cells:
                 to_add.append(c)
 
     to_add = sorted(set(to_add))
-    neighbors[cell] = to_add
+    peers[cell] = to_add
+
+
 
 
 
@@ -126,26 +81,26 @@ for line in file:
     #boards.append(line)
     line = str(line)
     line = line.strip()
-    if len(line) != 81:
-        continue
-    boards.append(line)
+    if len(line) == 81:
+        boards.append(line)
 
-
+print(len(boards))
 num_boards = len(boards)
+# print(num_boards)
 
 ind = random.randint(1, num_boards-1)
+# print(ind)
+game_board = boards[ind] 
+#game_board = '2...8.3...6..7..84.3.5..2.9...1.54.8.........4.27.6...3.1..7.4.72..4..6...4.1...3'
+#game_board = '.4.....5...19436....9...3..6...5...21.3...5.68...2...7..5...2....24367...3.....4.'
 
-game_board1 = boards[9]
-game_board = '2...8.3...6..7..84.3.5..2.9...1.54.8.........4.27.6...3.1..7.4.72..4..6...4.1...3'
-# print(game_board1)
-# print(game_board)
 #init board with given values
 for i in range(81):
     if game_board[i] != '.' and game_board[i] != 0:
         grid_vals[cells[i]] = str(game_board[i])
 
 
-print(grid_vals)
+# print(grid_vals)
 
 
 
@@ -193,7 +148,7 @@ def display_grid(grid):
 
 display_grid(grid_vals)
 
-### getting all possible values fo
+### getting all possible values for
 for cell in cells:
     possible_vals = ['1','2','3','4','5','6','7','8','9']
     connected_cells = []
@@ -220,62 +175,12 @@ for cell in cells:
                 st += i
 
             grid_vals[cell] = st
-            #print(grid_vals[cell])
-        # else:
-        #     #print("HELLO")
-        #     print("HALDFLDSA",grid_vals[cell], cell)
-        #     assign_val(str(grid_vals[cell]), cell)
 
 
 for cell, poss_vals in grid_vals.items():
     if len(poss_vals) == 1:
         assign_val(poss_vals[0], cell)
-
-
-# def init_solver(grid_vals):
-#     for c, val in grid_vals.items():
-#         print(c,val)
-#         if val != '.' and not assign_val(grid_vals, c, val):
-#             return False
-#     return grid_vals
-#
-# init_solver(grid_vals)
-
-
-#getting most constrained variables -> choose a random one from here to solve
-# min_len = float('inf')
-# most_constrained = []
-# for key, val in grid_vals.items():
-#     if len(val) < min_len and len(val) != 1:
-#         most_constrained = []
-#         min_len = len(val)
-#         most_constrained.append(key)
-#     elif len(val) == min_len:
-#         most_constrained.append(key)
-# print("MC", most_constrained)
-# #print(most_constrained)
-# if len(most_constrained) == 1:
-#     assign_val(grid_vals[most_constrained[0]], most_constrained[0], grid_vals, related_cells)
-# else:
-#     i = random.randint(0,len(most_constrained)-1)
-#     #print(most_constrained[i])
-#     #print(grid_vals[most_constrained[i]])
-#     #display_grid(grid_vals)
-#     print(most_constrained[i])
-#     possible = grid_vals[most_constrained[i]]
-#     choice_ind = random.randint(0,len(possible)-1)
-#     assignment = grid_vals[most_constrained[i]][choice_ind]
-#     print(assignment)
-
-
-
-
-
-
-#assign_val(assignment, most_constrained[i], grid_vals, related_cells)
-# copy = grid_vals.copy()
-# display_grid(copy)
-
+        update(grid_vals)
 
 for row in rows:
     seen = {}
@@ -287,12 +192,11 @@ for row in rows:
                 else:
                     seen[val][0] = seen[val][0] + 1
                     seen[val].append(r)
-    for key, val in seen.items():
-        if val[0] == 1:
-            #print(grid_vals[val[1]])
-            assign_val(key, val[1])
+    for key, val1 in seen.items():
+        if val1[0] == 1:
+            assign_val(key, val1[1])
+            update(grid_vals)
 
-print("COL")
 for col in cols:
     seen = {}
     for c in col:
@@ -305,104 +209,24 @@ for col in cols:
                     seen[val].append(c)
     for key, val in seen.items():
         if val[0] == 1:
-            print(grid_vals[val[1]])
-            print(key,val)
-
             assign_val(key, val[1])
+            update(grid_vals)
 
 
-# for row in rows:
-#     seen = {}
-#     for r in row:
-#         if r == "C3":
-#             print("ROW")
-#         if len(grid_vals[r]) > 1:
-#             for val in grid_vals[r]:
-#                 if val not in seen:
-#                     seen[val] = [1, r]
-#                 else:
-#                     seen[val][0] = seen[val][0] + 1
-#                     seen[val].append(r)
-#     for key, val in seen.items():
-#         if val[0] == 1:
-#             print(key,val)
-#             #print(grid_vals[val[1]])
-#             assign_val(key, val[1])
-# #
-# # for col in cols:
-# #     seen = {}
-# #     for c in col:
-# #         if len(grid_vals[c]) > 1:
-# #             for val in grid_vals[c]:
-# #                 if val not in seen:
-# #                     seen[val] = [1, c]
-# #                 else:
-# #                     seen[val][0] = seen[val][0] + 1
-# #                     seen[val].append(c)
-# #     for key, val in seen.items():
-# #         if val[0] == 1:
-# #             print(grid_vals[val[1]])
-# #             print(key,val)
-# #
-# #             assign_val(key, val[1])
-# # print(grid_vals)
-# #
-# for quad in quads:
-#     seen = {}
-#     for q in quad:
-#         #print(q)
-#         #print(grid_vals['A8'])
-#         if len(grid_vals[q]) > 1:
-#             for val in grid_vals[q]:
-#                 #print(seen)
-#                 if val not in seen:
-#                     seen[val] = [1, q]
-#                 else:
-#                     seen[val][0] = seen[val][0] + 1
-#                     seen[val].append(q)
-#     for key, val in seen.items():
-#         if val[0] == 1:
-#             #print(key,val)
-#             #print(grid_vals[val[1]])
-#             assign_val(key, val[1])
-#
-# # for cell, poss_vals in grid_vals.items():
-# #     if len(poss_vals) == 1:
-# #         assign_val(poss_vals[0], cell)
-#
-# print('here',grid_vals)
-# # for row in rows:
-# #     seen = {}
-# #     for r in row:
-# #         if len(grid_vals[r]) > 1:
-# #             for val in grid_vals[r]:
-# #                 if val not in seen:
-# #                     seen[val] = [1, r]
-# #                 else:
-# #                     seen[val][0] = seen[val][0] + 1
-# #                     seen[val].append(r)
-# #     for key, val in seen.items():
-# #         if val[0] == 1:
-# #             print(grid_vals[val[1]])
-# #             print(key,val)
-# #
-# #             assign_val(key, val[1])
-# print(grid_vals)
-# copy = grid_vals.copy()
-# display_grid(copy)
+for cell in cells:
+    seen = {}
+    for units in related_cells[cell]:
+        for k in units:
+            if len(grid_vals[k]) > 1:
+                for val in grid_vals[k]:
+                    if val not in seen:
+                        seen[val] = [1, k]
+                    else:
+                        seen[val][0] = seen[val][0] + 1
+                        seen[val].append(k)
+    for key, val in seen.items():
+        if val[0] == 1:
+            assign_val(key, val[1])
+            update(grid_vals)
 
-# def elim(grid_vals, cell, val):
-#     for r in related_cells[cell]:
-#         digits = [cell for cell in r if val in grid_vals[cell]]
-#         if len(digits) == 0:
-#             return False
-#         elif len(digits) == 1:
-#             assign_val(val, cell)
-#     return grid_vals
-#
-#
-# for cell in cells:
-#     for v in grid_vals[cell]:
-#         elim(grid_vals, cell, v)
-#
 display_grid(grid_vals)
