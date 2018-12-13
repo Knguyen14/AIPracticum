@@ -146,11 +146,9 @@ for line in file:
 #print(len(boards))
 num_boards = len(boards)
 # print(num_boards)
-
-ind = random.randint(1, num_boards-1)
-print(ind)
-game_board = boards[ind] 
-
+for i in range(0,len(boards)):
+    game_board = boards[i] 
+    print(game_board)
 #init board with given values
 for i in range(81):
     if game_board[i] != '.' and game_board[i] != 0:
