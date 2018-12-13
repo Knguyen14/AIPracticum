@@ -138,17 +138,13 @@ boards = []
 file = open("games.txt", "r")
 for line in file:
     #boards.append(line)
-    line = str(line)
-    line = line.strip()
-    if len(line) == 81:
-        boards.append(line)
+    boards.append(line)
 
-#print(len(boards))
 num_boards = len(boards)
-# print(num_boards)
-for i in range(0,len(boards)):
-    game_board = boards[i] 
-    print(game_board)
+
+ind = random.randint(1, num_boards-1)
+
+game_board = boards[38]
 #init board with given values
 for i in range(81):
     if game_board[i] != '.' and game_board[i] != 0:
