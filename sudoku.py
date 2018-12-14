@@ -1,4 +1,11 @@
 import random
+import argparse
+
+parser = argparse.ArgumentParser(description="Run Sudoku solver")
+parser.add_argument('--show_init_board', action='store_true')
+parser.add_argument('--show_steps', action='store_true')
+
+args = parser.parse_args()
 
 
 def cross(A, B):
@@ -187,8 +194,12 @@ def display_grid(grid):
 
 
 #display_grid(grid_vals)
+if args.show_init_board:
+    print("Starting Board:\n")
+    display_grid(grid_vals)
 
 get_poss_vals()
 solver()
-
+if args.show_init_board:
+    print("Solution:\n")
 display_grid(grid_vals)
