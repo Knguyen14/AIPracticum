@@ -1,9 +1,10 @@
 import random
 import argparse
+import time
 
 parser = argparse.ArgumentParser(description="Run Sudoku solver")
 parser.add_argument('--show_init_board', action='store_true')
-parser.add_argument('--show_steps', action='store_true')
+parser.add_argument('--show_time', action='store_true')
 
 args = parser.parse_args()
 
@@ -197,9 +198,17 @@ def display_grid(grid):
 if args.show_init_board:
     print("Starting Board:\n")
     display_grid(grid_vals)
-
+if args.show_time:
+    start = time.time()
 get_poss_vals()
 solver()
+if args.show_time:
+    end = time.time()
+
+    total_time = end - start
 if args.show_init_board:
     print("Solution:\n")
 display_grid(grid_vals)
+
+if args.show_time:
+    print("Total time taken:",total_time, "seconds.")
